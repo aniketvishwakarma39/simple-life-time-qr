@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>QR Code Project</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    min-height:100vh;
+    color:#fff;
+}
+
+/* ===== NAVBAR ===== */
+nav{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:15px;
+    padding:15px;
+    background:rgba(0,0,0,0.45);
+    box-shadow:0 4px 15px rgba(0,0,0,0.5);
+}
+
+.logo{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:#00ffcc;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    color:#000;
+}
+
+nav h1{
+    font-size:22px;
+    letter-spacing:1px;
+}
+
+/* ===== MAIN CONTAINER ===== */
+.container{
+    max-width:900px;
+    margin:30px auto;
+    background:rgba(255,255,255,0.08);
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 0 25px rgba(0,255,204,0.25);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:20px;
+    color:#00ffcc;
+}
+
+label{
+    display:block;
+    margin-top:12px;
+    font-size:14px;
+}
+
+input, textarea{
+    width:100%;
+    padding:10px;
+    margin-top:6px;
+    border-radius:6px;
+    border:none;
+    outline:none;
+}
+
+textarea{
+    resize:none;
+}
+
+.students{
+    margin-top:15px;
+}
+
+.student-row{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+}
+
+.student-row input{
+    flex:1;
+}
+
+/* ===== BUTTON ===== */
+button{
+    margin-top:20px;
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#00ffcc;
+    color:#000;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#00e6b8;
+    box-shadow:0 0 15px #00ffcc;
+}
+
+/* ===== QR SECTION ===== */
+.qr-box{
+    margin-top:35px;
+    text-align:center;
+    padding:20px;
+    border-radius:12px;
+    animation:glow 2s infinite alternate;
+}
+
+.qr-box img{
+    width:220px;
+    height:220px;
+    background:#fff;
+    padding:10px;
+    border-radius:12px;
+}
+
+@keyframes glow{
+    from{ box-shadow:0 0 10px #00ffcc; }
+    to{ box-shadow:0 0 35px #00ffcc; }
+}
+
+/* ===== FOOTER ===== */
+footer{
+    margin-top:40px;
+    text-align:center;
+    padding:15px;
+    background:rgba(0,0,0,0.45);
+    font-size:14px;
+}
+
+footer span{
+    color:#00ffcc;
+    font-weight:bold;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:600px){
+    nav h1{
+        font-size:16px;
+    }
+
+    .student-row{
+        flex-direction:column;
+    }
+
+    .qr-box img{
+        width:180px;
+        height:180px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav>
+    <div class="logo">JRU</div>
+    <h1>Jharkhand Rai University</h1>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="container">
+    <h2>QR Code Based Plant Information System</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Batch Name</label>
+        <input type="text" name="batch" required>
+
+        <label>Group Name</label>
+        <input type="text" name="group" required>
+
+        <label>Plant Name</label>
+        <input type="text" name="plant" required>
+
+        <label>Plant Description (5 lines)</label>
+        <textarea name="description" rows="5" required></textarea>
+
+        <div class="students">
+            <h3>Students Details</h3>
+
+            {% for i in "123456789012345" %}
+            <div class="student-row">
+                <input name="student{{ forloop.counter }}" placeholder="Student {{ forloop.counter }} Name">
+                <input name="enroll{{ forloop.counter }}" placeholder="Enrollment Number">
+            </div>
+            {% endfor %}
+        </div>
+
+        <button type="submit">Generate QR Code</button>
+    </form>
+
+    {% if qr %}
+    <div class="qr-box">
+        <h3>Generated QR Code</h3>
+        <img src="data:image/png;base64,{{ qr }}">
+
+        <br><br>
+
+        <a href="{% url 'download_qr' %}">
+            <button type="button">Download QR Code</button>
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    Designed by <span>Nomads Smith</span>
+</footer>
+
+</body>
+</html>
